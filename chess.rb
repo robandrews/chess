@@ -91,11 +91,50 @@ class King < SteppingPiece
     SteppingPiece::KING
   end
 end
-
 class Knight < SteppingPiece
   def move_dirs
     SteppingPiece::KNIGHT
   end
+end
+
+class Pawn < Piece
+
+  PAWN = [[0,1], [1,-1], [-1,-1]]
+
+  def move_dirs
+    if self.color == :black
+      return PAWN.map{|move| move.map{|x| x*-1}}
+    else
+      return PAWNS
+    end
+  end
+
+  def move
+    possible_moves = []
+    test_space = []
+
+    move_dirs.each do |dirs|
+      i,j = dirs
+      x,y = self.pos
+      test_space << [x+i, y+j]
+    end
+
+    #Move ahead
+
+    #Take a piece
+
+    #Take a piece
+
+
+    if @board.valid(test_space) && @board.empty?(test_space)
+      possible_moves << move_dirs[0]
+    end
+
+    if @board.valid(test_space) && @board.empty?(test_space)
+
+    possible_moves
+  end
+
 end
 
 ### TODO
