@@ -16,11 +16,12 @@ class SlidingPiece < Piece
   HORIZONTAL = [[1,0], [0,1], [-1,0], [0,-1]]
   DIAG       = [[1,1], [-1,-1], [1,-1], [-1,1]]
 
-  def moves(move_dirs)
+
+  def moves
     #return all valid moves
     possible_moves = []
 
-    move_dirs.each do |dir|
+    self.move_dirs.each do |dir|
       test_space = self.pos
 
       puts "Workign on: #{dir}"
@@ -30,6 +31,8 @@ class SlidingPiece < Piece
 
         if @board.empty?(test_space) # || other color piece
           puts "Testing: #{test_space}"
+          puts "self pos vs testspace#{self.pos == test_space}"
+          puts "empty ? #{@board.empty?(test_space)}"
           possible_moves << test_space unless possible_moves.include? test_space
           test_space = [x+i, y+j]
         elsif test_space == self.pos
@@ -37,9 +40,8 @@ class SlidingPiece < Piece
         else
           break
         end
-
-
       end
+
     end
     possible_moves
   end
@@ -53,10 +55,6 @@ class Rook < SlidingPiece
     SlidingPiece::HORIZONTAL
   end
 
-  def moves
-    super(self.move_dirs)
-  end
-
 end
 
 class Bishop < SlidingPiece
@@ -65,20 +63,12 @@ class Bishop < SlidingPiece
     SlidingPiece::DIAG
   end
 
-  def moves
-    super(self.move_dirs)
-  end
-
 end
 
 class Queen < SlidingPiece
 
   def move_dirs
     SlidingPiece::DIAG + SlidingPiece::HORIZONTAL
-  end
-
-  def moves
-    super(self.move_dirs)
   end
 
 end
@@ -98,7 +88,7 @@ bishop = Bishop.new(:black, [4,4], b)
 b[[4,4]] = bishop
 
 queen = Queen.new(:black, [3,5], b)
-b[[5,5]] = queen
+b[[3,5]] = queen
 
 puts "Valid Rook Moves: #{rook.moves}"
 puts "Valid Bishop Moves: #{bishop.moves}"
