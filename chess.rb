@@ -26,7 +26,7 @@ class SlidingPiece < Piece
       while @board.valid?(test_space)
         i, j = dir
         x, y = test_space
-        possible_moves << test_space unless test_space == self.pos
+        possible_moves << test_space if @board.empty?(test_space)
         test_space = [x+i, y+j]
       end
     end
@@ -77,7 +77,6 @@ end
 ### TODO
 
 # => Stop when hitting a piece
-# => Maybe draw board?
 
 #### Testing Methods
 b = Board.new
@@ -89,7 +88,7 @@ bishop = Bishop.new(:black, [4,4], b)
 b[[4,4]] = bishop
 puts "Valid Bishop Moves: #{bishop.moves}"
 
-quen = Queen.new(:black, [5,5], b)
-b[[5,5]] = quen
-puts "Valid Queen Moves: #{quen.moves}"
+queen = Queen.new(:black, [3,5], b)
+b[[5,5]] = queen
+puts "Valid Queen Moves: #{queen.moves}"
 
