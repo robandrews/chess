@@ -20,14 +20,25 @@ class SlidingPiece < Piece
     #return all valid moves
     possible_moves = []
 
-
     move_dirs.each do |dir|
       test_space = self.pos
+
+      puts "Workign on: #{dir}"
       while @board.valid?(test_space)
         i, j = dir
         x, y = test_space
-        possible_moves << test_space if @board.empty?(test_space)
-        test_space = [x+i, y+j]
+
+        if @board.empty?(test_space) # || other color piece
+          puts "Testing: #{test_space}"
+          possible_moves << test_space unless possible_moves.include? test_space
+          test_space = [x+i, y+j]
+        elsif test_space == self.pos
+          test_space = [x+i, y+j]
+        else
+          break
+        end
+
+
       end
     end
     possible_moves
@@ -82,13 +93,14 @@ end
 b = Board.new
 rook = Rook.new(:black, [3,3], b)
 b[[3,3]] = rook
-puts "Valid Rook Moves: #{rook.moves}"
 
 bishop = Bishop.new(:black, [4,4], b)
 b[[4,4]] = bishop
-puts "Valid Bishop Moves: #{bishop.moves}"
 
 queen = Queen.new(:black, [3,5], b)
 b[[5,5]] = queen
+
+puts "Valid Rook Moves: #{rook.moves}"
+puts "Valid Bishop Moves: #{bishop.moves}"
 puts "Valid Queen Moves: #{queen.moves}"
 
