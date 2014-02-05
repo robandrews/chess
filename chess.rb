@@ -15,6 +15,22 @@ class Piece
     return false if piece == nil
     piece.color != self.color
   end
+
+  def valid_moves
+
+  end
+
+  def move_into_check?(pos)
+
+    trial_board = @board.dup
+
+    trial_board.move(self.pos, pos)
+    if trial_board.in_check?(self.color)
+      return true
+    end
+
+    false
+  end
 end
 
 class SlidingPiece < Piece

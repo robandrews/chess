@@ -21,12 +21,24 @@ class Board
 
   #black moves up.
   attr_accessor :board
-  def initialize(debug = false)
-    @board = Array.new(8) { Array.new(8) { nil } }
+  def initialize(debug = false, board = Array.new(8) { Array.new(8) { nil } })
+    @board = board
     return nil if debug == :debug
     place_pieces
 
     nil
+  end
+
+  def dup
+    duped_board = Board.new(:debug)
+
+    (0...8).each do |row|
+      (0...8).times do |col|
+        duped_board[[row,col]] = self[[row,col]] unless self[[row,col]].nil?
+      end
+    end
+
+    duped_board
   end
 
   def inspect
