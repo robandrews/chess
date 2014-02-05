@@ -2,20 +2,38 @@ require "./chess.rb"
 # encoding: UTF-8
 class Board
   LETTERS = ("a".."h").to_a
+
+  SYM_HASH = {
+    :white_king   => "\u2654",
+    :white_queen  => "\u2655",
+    :white_rook   => "\u2656",
+    :white_bishop => "\u2657",
+    :white_knight  => "\u2658",
+    :white_pawn   => "\u2659",
+
+    :black_king   => "\u265A",
+    :black_queen  => "\u265B",
+    :black_rook   => "\u265C",
+    :black_bishop => "\u265D",
+    :black_knight => "\u265E",
+    :black_pawn   => "\u265F"
+  }
+
   #black moves up.
   attr_accessor :board
-  def initialize()
+  def initialize(debug = false)
     @board = Array.new(8) { Array.new(8) { nil } }
+    return nil if debug == :debug
     place_pieces
 
     nil
   end
-  
+
   def inspect
     draw_board
   end
-  
-  def [](*pos)
+
+  def [](pos)
     x, y = pos
     @board[y][x]
   end
@@ -37,54 +55,40 @@ class Board
 
   def place_pieces
 
-    sym_hash = {
-      :white_king   => "\u2654",
-      :white_queen  => "\u2655",
-      :white_rook   => "\u2656",
-      :white_bishop => "\u2657",
-      :white_knight  => "\u2658",
-      :white_pawn   => "\u2659",
 
-      :black_king   => "\u265A",
-      :black_queen  => "\u265B",
-      :black_rook   => "\u265C",
-      :black_bishop => "\u265D",
-      :black_knight => "\u265E",
-      :black_pawn   => "\u265F"
-    }
 
     (0...8).to_a.each do |i|
-      Pawn.new(:black, [i,6], self, sym_hash[:black_pawn])
-      Pawn.new(:white, [i,1], self, sym_hash[:white_pawn])
+      Pawn.new(:black, [i,6], self, SYM_HASH[:black_pawn])
+      Pawn.new(:white, [i,1], self, SYM_HASH[:white_pawn])
     end
 
-    Rook.new(:black, [7,0], self, sym_hash[:black_rook])
-    Rook.new(:black, [7,7], self, sym_hash[:black_rook])
-    Rook.new(:white, [0,0], self, sym_hash[:white_rook])
-    Rook.new(:white, [0,7], self, sym_hash[:white_rook])
+    Rook.new(:white, [7,0], self, SYM_HASH[:white_rook])
+    Rook.new(:white, [0,0], self, SYM_HASH[:white_rook])
+    Rook.new(:black, [0,7], self, SYM_HASH[:black_rook])
+    Rook.new(:black, [7,7], self, SYM_HASH[:black_rook])
 
-    Knight.new(:black, [1,7], self, sym_hash[:black_knight])
-    Knight.new(:black, [6,7], self, sym_hash[:black_knight])
-    Knight.new(:white, [1,0], self, sym_hash[:white_knight])
-    Knight.new(:white, [6,0], self, sym_hash[:white_knight])
+    Knight.new(:black, [1,7], self, SYM_HASH[:black_knight])
+    Knight.new(:black, [6,7], self, SYM_HASH[:black_knight])
+    Knight.new(:white, [1,0], self, SYM_HASH[:white_knight])
+    Knight.new(:white, [6,0], self, SYM_HASH[:white_knight])
 
-    Bishop.new(:black, [2,0], self, sym_hash[:black_bishop])
-    Bishop.new(:black, [5,0], self, sym_hash[:black_bishop])
-    Bishop.new(:white, [2,7], self, sym_hash[:white_bishop])
-    Bishop.new(:white, [5,7], self, sym_hash[:white_bishop])
+    Bishop.new(:white, [2,0], self, SYM_HASH[:white_bishop])
+    Bishop.new(:white, [5,0], self, SYM_HASH[:white_bishop])
+    Bishop.new(:black, [2,7], self, SYM_HASH[:black_bishop])
+    Bishop.new(:black, [5,7], self, SYM_HASH[:black_bishop])
 
-    Queen.new(:black, [4,7], self, sym_hash[:black_queen])
-    Queen.new(:white, [4,0], self, sym_hash[:white_queen])
+    Queen.new(:black, [4,7], self, SYM_HASH[:black_queen])
+    Queen.new(:white, [4,0], self, SYM_HASH[:white_queen])
 
-    King.new(:black, [3,7], self, sym_hash[:black_king])
-    King.new(:white, [3,0], self, sym_hash[:white_king])
+    King.new(:black, [3,7], self, SYM_HASH[:black_king])
+    King.new(:white, [3,0], self, SYM_HASH[:white_king])
 
     nil
   end
 
   def draw_board
     print_letters
-    
+
     @board.each_with_index do |row, index|
       print "#{8-index}  "
       row.each do |piece|
@@ -97,11 +101,11 @@ class Board
       end
       print "  #{8-index}\n"
     end
-    
+
     print_letters
     nil
   end
-  
+
   def print_letters
     print "   "
     LETTERS.each do |i|
@@ -109,7 +113,45 @@ class Board
     end
     print "\n"
   end
-end
 
-b = Board.new
-b.draw_board
+  def move(start_pos, end_pos)
+    raise "No Start Piece" if self.empty?(start_pos)
+    start_piece = self[start_pos]
+
+    unless start_piece.moves.include? end_pos
+      raise "Invalid Move Location"
+    end
+
+    self[end_pos] = start_piece
+    start_piece.pos = end_pos
+    self[start_pos] = nil
+
+    true
+  end
+
+  def in_check?(color)
+    king_pos = all_pieces(color).select { |p| p.is_a? King }.first.pos
+
+    all_pieces(enemy_color(color)).each do |piece|
+      return true if piece.moves.include? king_pos
+    end
+
+    false
+  end
+
+  def enemy_color(color)
+    return ( color == :black ? :white : :black )
+  end
+
+  def all_pieces(color)
+    pieces = []
+
+    @board.flatten.each do |position|
+      unless position.nil?
+        pieces << position if position.color == color
+      end
+    end
+
+    pieces
+  end
+end
