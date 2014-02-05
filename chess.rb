@@ -9,6 +9,12 @@ class Piece
     @symbol
   end
 
+  def enemy_at?(pos)
+    piece = @board[pos] if @board.valid?(pos)
+    puts "Value on board @ pos#{piece}@#{pos}"
+    return false if piece == nil
+    piece.color != self.color
+  end
 end
 
 class SlidingPiece < Piece
@@ -99,38 +105,41 @@ end
 
 class Pawn < Piece
 
-  PAWN = [[0,1], [1,-1], [-1,-1]]
+  PAWN = [[0,1], [1,1], [-1,1]]
+
+  def initialize(color, pos, board)
+    super
+    @first_move = true
+  end
+
 
   def move_dirs
-    if self.color == :black
+    # Black always moves up
+    if self.color == :white
       return PAWN.map{|move| move.map{|x| x*-1}}
     else
-      return PAWNS
+      return PAWN
     end
   end
 
-  def move
+  def moves
     possible_moves = []
-    test_space = []
+    test_spaces = []
 
     move_dirs.each do |dirs|
       i,j = dirs
       x,y = self.pos
-      test_space << [x+i, y+j]
+      test_spaces << [x+i, y+j]
     end
 
     #Move ahead
+    test = test_spaces.shift
+    possible_moves << test if @board.valid?(test) && @board.empty?(test)
 
     #Take a piece
-
-    #Take a piece
-
-
-    if @board.valid(test_space) && @board.empty?(test_space)
-      possible_moves << move_dirs[0]
+    test_spaces.each do |space|
+      possible_moves << space if enemy_at?(space)
     end
-
-    if @board.valid(test_space) && @board.empty?(test_space)
 
     possible_moves
   end
@@ -155,12 +164,15 @@ b[[3,5]] = queen
 king = King.new(:black, [3,4], b)
 b[[3,4]] = king
 
-knight = Knight.new(:black, [5,6], b)
-b[[5,6]] = knight
+pawn1 = Pawn.new(:white, [4,6], b)
+b[[4,6]] = pawn1
+
+pawn2 = Pawn.new(:white, [4,7], b)
+b[[4,7]] = pawn2
 
 puts "Valid Rook Moves: #{rook.moves}"
 puts "Valid Bishop Moves: #{bishop.moves}"
 puts "Valid Queen Moves: #{queen.moves}"
 puts "Valid King Moves: #{king.moves}"
-puts "Valid Knight Moves: #{knight.moves}"
-
+puts "Valid Pawn_1 Moves: #{pawn1.moves}"
+puts "Valid Pawn_2 Moves: #{pawn2.moves}"

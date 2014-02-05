@@ -1,4 +1,7 @@
 class Board
+
+  # Black always moves up
+
   attr_accessor :board
   def initialize()
     @board = Array.new(8) { Array.new(8) { nil } }
@@ -23,5 +26,4 @@ class Board
     x, y = pos
     @board[y][x].nil?
   end
-
 end
