@@ -115,7 +115,7 @@ class Pawn < Piece
 
   def move_dirs
     # Black always moves up
-    if self.color == :white
+    if self.color == :black
       return PAWN.map{|move| move.map{|x| x*-1}}
     else
       return PAWN
@@ -158,16 +158,16 @@ b[[3,3]] = rook
 bishop = Bishop.new(:black, [4,4], b)
 b[[4,4]] = bishop
 
-queen = Queen.new(:black, [3,5], b)
+queen = Queen.new(:white, [3,5], b)
 b[[3,5]] = queen
 
 king = King.new(:black, [3,4], b)
 b[[3,4]] = king
 
-pawn1 = Pawn.new(:white, [4,6], b)
+pawn1 = Pawn.new(:black, [4,6], b)
 b[[4,6]] = pawn1
 
-pawn2 = Pawn.new(:white, [4,7], b)
+pawn2 = Pawn.new(:black, [4,7], b)
 b[[4,7]] = pawn2
 
 puts "Valid Rook Moves: #{rook.moves}"
