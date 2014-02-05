@@ -171,6 +171,21 @@ class Board
     false
   end
 
+  def checkmate?(color)
+    done = true
+    moves = []
+    if in_check?(color)
+      all_pieces(color).each do |piece|
+        if !piece.valid_moves.empty?
+          moves << {piece.symbol => piece.valid_moves}
+          done = false
+        end
+      end
+    end
+    puts moves
+    done
+  end
+
   def enemy_color(color)
     return ( color == :black ? :white : :black )
   end

@@ -118,24 +118,6 @@ class King < SteppingPiece
   def move_dirs
     SteppingPiece::KING
   end
-
-  # def moves
-  #   possible_moves = super
-  #
-  #   color = ( self.color == :black ? :white : :black )
-  #
-  #   enemy_array = @board.all_pieces(color)
-  #   enemy_moves = []
-  #
-  #   puts"Enemy_array: #{enemy_array}"
-  #   enemy_array.each do |enemy|
-  #     enemy_moves += enemy.moves
-  #   end
-  #   puts "Enemy_moves #{enemy_moves}"
-  #   possible_moves.reject! { |move| enemy_moves.include? move }
-  #
-  #
-  # end
 end
 
 class Knight < SteppingPiece
