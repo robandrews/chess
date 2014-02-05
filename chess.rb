@@ -11,7 +11,6 @@ class Piece
 
   def enemy_at?(pos)
     piece = @board[pos] if @board.valid?(pos)
-    puts "Value on board @ pos#{piece}@#{pos}"
     return false if piece == nil
     piece.color != self.color
   end
@@ -34,11 +33,15 @@ class SlidingPiece < Piece
         i, j = dir
         x, y = test_space
 
-        if @board.empty?(test_space) # || other color piece
+        if @board.empty?(test_space)
           possible_moves << test_space unless possible_moves.include? test_space
           test_space = [x+i, y+j]
         elsif test_space == self.pos
           test_space = [x+i, y+j]
+        elsif enemy_at?(test_space)
+          possible_moves << test_space unless possible_moves.include? test_space
+          test_space = [x+i, y+j]
+          break
         else
           break
         end
@@ -61,7 +64,7 @@ class SteppingPiece < Piece
       i,j = dir
       x,y = self.pos
       test_space = [x+i, y+j]
-      if @board.valid?(test_space) && @board.empty?(test_space)
+      if @board.valid?(test_space) && ( @board.empty?(test_space) || enemy_at?(test_space) )
         possible_moves << test_space
       end
     end
