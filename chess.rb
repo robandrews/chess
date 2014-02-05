@@ -2,11 +2,12 @@ require './board.rb'
 
 class Piece
 
-  attr_accessor :color, :pos, :board
+  attr_accessor :color, :pos, :board, :symbol
 
-  def initialize(color, pos, board)
+  def initialize(color, pos, board, symbol)
     @color, @pos, @board = color, pos, board
-    @symbol
+    @board[pos] = self
+    @symbol = symbol
   end
 
   def enemy_at?(pos)
@@ -110,9 +111,10 @@ class Pawn < Piece
 
   PAWN = [[0,1], [1,1], [-1,1]]
 
-  def initialize(color, pos, board)
+  def initialize(color, pos, board, symbol)
     super
     @first_move = true
+
   end
 
 
@@ -149,33 +151,30 @@ class Pawn < Piece
 
 end
 
-### TODO
-
-# => Stop when hitting a piece
-
 #### Testing Methods
-b = Board.new
-rook = Rook.new(:black, [3,3], b)
-b[[3,3]] = rook
+# b = Board.new
+# rook = Rook.new(:black, [3,3], b)
+#
+# bishop = Bishop.new(:black, [4,4], b)
+#
+# queen = Queen.new(:white, [3,5], b)
+#
+# king = King.new(:black, [3,4], b)
+#
+# pawn1 = Pawn.new(:black, [4,6], b)
+#
+# pawn2 = Pawn.new(:black, [4,7], b)
+#
+# puts "Valid Rook Moves: #{rook.moves}"
+# puts "Valid Bishop Moves: #{bishop.moves}"
+# puts "Valid Queen Moves: #{queen.moves}"
+# puts "Valid King Moves: #{king.moves}"
+# puts "Valid Pawn_1 Moves: #{pawn1.moves}"
+# puts "Valid Pawn_2 Moves: #{pawn2.moves}"
 
-bishop = Bishop.new(:black, [4,4], b)
-b[[4,4]] = bishop
-
-queen = Queen.new(:white, [3,5], b)
-b[[3,5]] = queen
-
-king = King.new(:black, [3,4], b)
-b[[3,4]] = king
-
-pawn1 = Pawn.new(:black, [4,6], b)
-b[[4,6]] = pawn1
-
-pawn2 = Pawn.new(:black, [4,7], b)
-b[[4,7]] = pawn2
-
-puts "Valid Rook Moves: #{rook.moves}"
-puts "Valid Bishop Moves: #{bishop.moves}"
-puts "Valid Queen Moves: #{queen.moves}"
-puts "Valid King Moves: #{king.moves}"
-puts "Valid Pawn_1 Moves: #{pawn1.moves}"
-puts "Valid Pawn_2 Moves: #{pawn2.moves}"
+# Valid Rook Moves: [[4, 3], [5, 3], [6, 3], [7, 3], [2, 3], [1, 3], [0, 3], [3, 2], [3, 1], [3, 0]]
+# Valid Bishop Moves: [[5, 5], [5, 3], [6, 2], [7, 1], [3, 5]]
+# Valid Queen Moves: [[4, 6], [2, 4], [1, 3], [0, 2], [4, 4], [2, 6], [4, 5], [5, 5], [6, 5], [7, 5], [3, 6], [2, 5], [1, 5], [0, 5], [3, 4]]
+# Valid King Moves: [[4, 5], [4, 3], [2, 3], [2, 4], [2, 5], [3, 5]]
+# Valid Pawn_1 Moves: [[4, 5], [3, 5]]
+# Valid Pawn_2 Moves: []
