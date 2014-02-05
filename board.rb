@@ -33,8 +33,16 @@ class Board
     duped_board = Board.new(:debug)
 
     (0...8).each do |row|
-      (0...8).times do |col|
-        duped_board[[row,col]] = self[[row,col]] unless self[[row,col]].nil?
+      (0...8).each do |col|
+        unless self[[row,col]].nil?
+          piece = self[[row,col]]
+          duped_board[[row,col]] = self[[row,col]].class.new(
+            piece.color,
+            [row,col],
+            duped_board,
+            piece.symbol
+          )
+        end
       end
     end
 
@@ -130,10 +138,22 @@ class Board
     raise "No Start Piece" if self.empty?(start_pos)
     start_piece = self[start_pos]
 
-    unless start_piece.moves.include? end_pos
+    debug_value = start_piece.valid_moves
+
+    unless start_piece.valid_moves.include? end_pos
       raise "Invalid Move Location"
     end
 
+    self[end_pos] = start_piece
+    start_piece.pos = end_pos
+    self[start_pos] = nil
+
+    true
+  end
+
+  def move!(start_pos, end_pos)
+
+    start_piece = self[start_pos]
     self[end_pos] = start_piece
     start_piece.pos = end_pos
     self[start_pos] = nil

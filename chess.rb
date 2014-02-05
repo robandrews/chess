@@ -17,20 +17,22 @@ class Piece
   end
 
   def valid_moves
-
+    self.moves.reject { |move| move_into_check?(self.pos, move) }
   end
 
-  def move_into_check?(pos)
+  def move_into_check?(start_pos, end_pos)
 
     trial_board = @board.dup
 
-    trial_board.move(self.pos, pos)
+    trial_board.move!(start_pos, end_pos)
+
     if trial_board.in_check?(self.color)
       return true
     end
 
     false
   end
+
 end
 
 class SlidingPiece < Piece
@@ -117,23 +119,23 @@ class King < SteppingPiece
     SteppingPiece::KING
   end
 
-  def moves
-    possible_moves = super
-
-    color = ( self.color == :black ? :white : :black )
-
-    enemy_array = @board.all_pieces(color)
-    enemy_moves = []
-
-    puts"Enemy_array: #{enemy_array}"
-    enemy_array.each do |enemy|
-      enemy_moves += enemy.moves
-    end
-    puts "Enemy_moves #{enemy_moves}"
-    possible_moves.reject! { |move| enemy_moves.include? move }
-
-
-  end
+  # def moves
+  #   possible_moves = super
+  #
+  #   color = ( self.color == :black ? :white : :black )
+  #
+  #   enemy_array = @board.all_pieces(color)
+  #   enemy_moves = []
+  #
+  #   puts"Enemy_array: #{enemy_array}"
+  #   enemy_array.each do |enemy|
+  #     enemy_moves += enemy.moves
+  #   end
+  #   puts "Enemy_moves #{enemy_moves}"
+  #   possible_moves.reject! { |move| enemy_moves.include? move }
+  #
+  #
+  # end
 end
 
 class Knight < SteppingPiece
