@@ -1,5 +1,7 @@
+require "./chess.rb"
+# encoding: UTF-8
 class Board
-
+  LETTERS = ("a".."h").to_a
   #black moves up.
   attr_accessor :board
   def initialize()
@@ -8,8 +10,12 @@ class Board
 
     nil
   end
-
-  def [](pos)
+  
+  def inspect
+    draw_board
+  end
+  
+  def [](*pos)
     x, y = pos
     @board[y][x]
   end
@@ -77,20 +83,33 @@ class Board
   end
 
   def draw_board
-
-    @board.each_with_index do |row|
+    print_letters
+    
+    @board.each_with_index do |row, index|
+      print "#{8-index}  "
       row.each do |piece|
         if piece.nil?
-          print " "
+          print "-"
         else
           print piece.symbol
         end
         print "."
       end
-      print "\n"
+      print "  #{8-index}\n"
     end
-
+    
+    print_letters
     nil
   end
-
+  
+  def print_letters
+    print "   "
+    LETTERS.each do |i|
+      print "#{i}."
+    end
+    print "\n"
+  end
 end
+
+b = Board.new
+b.draw_board
