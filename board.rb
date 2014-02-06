@@ -1,4 +1,4 @@
-require "./chess.rb"
+
 # encoding: UTF-8
 class Board
   LETTERS = ("a".."h").to_a
@@ -107,6 +107,7 @@ class Board
   end
 
   def draw_board
+    # puts "\e[H\e[2J"
     print_letters
 
     @board.each_with_index do |row, index|
@@ -137,8 +138,6 @@ class Board
   def move(start_pos, end_pos)
     raise "No Start Piece" if self.empty?(start_pos)
     start_piece = self[start_pos]
-
-    debug_value = start_piece.valid_moves
 
     unless start_piece.valid_moves.include? end_pos
       raise "Invalid Move Location"
@@ -172,13 +171,13 @@ class Board
   end
 
   def checkmate?(color)
-    done = true
+    done = false
     moves = []
     if in_check?(color)
       all_pieces(color).each do |piece|
         if !piece.valid_moves.empty?
           moves << {piece.symbol => piece.valid_moves}
-          done = false
+          done = true
         end
       end
     end

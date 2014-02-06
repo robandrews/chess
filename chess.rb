@@ -1,4 +1,4 @@
-require './board.rb'
+
 
 class Piece
 
@@ -17,7 +17,10 @@ class Piece
   end
 
   def valid_moves
-    self.moves.reject { |move| move_into_check?(self.pos, move) }
+    puts "valid moves"
+    x = self.moves.reject { |move| move_into_check?(self.pos, move) }
+    puts x
+    x
   end
 
   def move_into_check?(start_pos, end_pos)
@@ -132,17 +135,24 @@ class Pawn < Piece
 
   def initialize(color, pos, board, symbol)
     super
-    @first_move = true
-
+    @first_pos = pos
   end
 
 
   def move_dirs
+
+    arr = PAWN.dup
+
+    if self.pos == @first_pos
+      arr << [0,2]
+      p arr
+    end
+
     # Black always moves up
     if self.color == :black
-      return PAWN.map{|move| move.map{|x| x*-1}}
+      return arr.map{|move| move.map{|x| x*-1}}
     else
-      return PAWN
+      return arr
     end
   end
 
