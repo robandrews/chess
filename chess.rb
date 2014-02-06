@@ -1,5 +1,3 @@
-
-
 class Piece
 
   attr_accessor :color, :pos, :board, :symbol
@@ -18,9 +16,14 @@ class Piece
 
   def valid_moves
     puts "valid moves"
-    x = self.moves.reject { |move| move_into_check?(self.pos, move) }
-    puts x
-    x
+    valids = []
+    all_moves = self.moves
+    puts "#{all_moves} all moves which should equal possible moves^"
+    all_moves.each do |move| 
+      valids << move unless move_into_check?(self.pos, move)
+    end
+    puts "These are valid moves #{valids} for #{self}"
+    valids
   end
 
   def move_into_check?(start_pos, end_pos)
@@ -38,6 +41,64 @@ class Piece
 
 end
 
+class Pawn < Piece
+
+  PAWN = [[0,1], [1,1], [-1,1]]
+
+  def initialize(color, pos, board, symbol)
+    super
+    @first_pos = pos
+  end
+
+
+  def move_dirs
+
+    arr = PAWN.dup
+
+    if self.pos == @first_pos
+      puts "self.pos == @first.pos => #{self.pos == @first_pos}"
+      arr << [0,2]
+    end
+
+    # Black always moves up
+    if self.color == :black
+      arr =  arr.map{|move| move.map{|x| x*-1}}
+    end
+    puts "move dirs equalrs #{p arr}"
+    arr
+  end
+
+  def moves
+    possible_moves = []
+    test_spaces = []
+
+    move_dirs.each do |dirs|
+      i,j = dirs
+      x,y = self.pos
+      test_spaces << [x+i, y+j]
+    end
+    
+    puts "Testing spaces: #{test_spaces}"
+    puts "Self.pos = #{self.pos}"
+    puts "Self.sym = #{self.symbol}"
+    
+    #Move ahead moves
+    #THIS NEEDS WORK...SOME REASON IT ALLOWS TAKING A PIECE STRAIGHT ON
+    tests = test_spaces.select{ |move| move.first == self.pos.first }
+    puts "TESTS = #{tests}"
+    tests.each do |test|
+      possible_moves << test if @board.valid?(test) && @board.empty?(test)
+    end
+    
+    
+    #Take a piece
+    test_spaces.each do |space|
+      possible_moves << space if enemy_at?(space)
+    end
+    puts "Possible Moves: #{possible_moves}"
+    possible_moves
+  end
+end
 class SlidingPiece < Piece
 
   HORIZONTAL = [[1,0], [0,1], [-1,0], [0,-1]]
@@ -75,7 +136,6 @@ class SlidingPiece < Piece
 
 
 end
-
 class SteppingPiece < Piece
   KING = [[1,1], [1,0], [1,-1], [0,-1], [-1,-1], [-1,0], [-1,1], [0,1]]
   KNIGHT = [[1,2], [2,1], [-1,2], [2,-1], [-2,1], [1, -2], [-1,-2], [-2,-1]]
@@ -93,89 +153,29 @@ class SteppingPiece < Piece
     possible_moves
   end
 end
-
-
 class Rook < SlidingPiece
 
   def move_dirs
     SlidingPiece::HORIZONTAL
   end
-
 end
 class Bishop < SlidingPiece
-
   def move_dirs
     SlidingPiece::DIAG
   end
-
 end
 class Queen < SlidingPiece
-
   def move_dirs
     SlidingPiece::DIAG + SlidingPiece::HORIZONTAL
   end
-
 end
-
 class King < SteppingPiece
   def move_dirs
     SteppingPiece::KING
   end
 end
-
 class Knight < SteppingPiece
   def move_dirs
     SteppingPiece::KNIGHT
   end
-end
-
-class Pawn < Piece
-
-  PAWN = [[0,1], [1,1], [-1,1]]
-
-  def initialize(color, pos, board, symbol)
-    super
-    @first_pos = pos
-  end
-
-
-  def move_dirs
-
-    arr = PAWN.dup
-
-    if self.pos == @first_pos
-      arr << [0,2]
-      p arr
-    end
-
-    # Black always moves up
-    if self.color == :black
-      return arr.map{|move| move.map{|x| x*-1}}
-    else
-      return arr
-    end
-  end
-
-  def moves
-    possible_moves = []
-    test_spaces = []
-
-    move_dirs.each do |dirs|
-      i,j = dirs
-      x,y = self.pos
-      test_spaces << [x+i, y+j]
-    end
-
-    #Move ahead
-    test = test_spaces.shift
-    possible_moves << test if @board.valid?(test) && @board.empty?(test)
-
-    #Take a piece
-    test_spaces.each do |space|
-      possible_moves << space if enemy_at?(space)
-    end
-
-    possible_moves
-  end
-
 end

@@ -139,10 +139,11 @@ class Board
     raise "No Start Piece" if self.empty?(start_pos)
     start_piece = self[start_pos]
 
-    unless start_piece.valid_moves.include? end_pos
+    unless start_piece.valid_moves.include?(end_pos)
       raise "Invalid Move Location"
     end
 
+    #move piece
     self[end_pos] = start_piece
     start_piece.pos = end_pos
     self[start_pos] = nil
@@ -162,8 +163,9 @@ class Board
 
   def in_check?(color)
     king_pos = all_pieces(color).select { |p| p.is_a? King }.first.pos
-
+    
     all_pieces(enemy_color(color)).each do |piece|
+      puts "I'm \# in_check"
       return true if piece.moves.include? king_pos
     end
 
