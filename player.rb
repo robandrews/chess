@@ -1,7 +1,7 @@
 class Player
 
   attr_reader :color, :name
-  def initialize(color)
+  def initialize(color, name="Bastion")
     @name = get_name
     @color = color
   end
@@ -15,8 +15,8 @@ class Player
     begin
       print "Please enter a move (e.g. f2,f3)\n#{@color}=> "
       str = gets.chomp
-      coordinates = []
-      coordinates = str.match(/^([a-h]{1})([0-8]{1})\W*([a-h]{1})([0-8]{1})$/i).to_a
+      regex = /^([a-h]{1})([0-8]{1})\W*([a-h]{1})([0-8]{1})$/i
+      coordinates = str.match(regex).to_a
 
       raise "InvalidInput" if coordinates.empty?
 
